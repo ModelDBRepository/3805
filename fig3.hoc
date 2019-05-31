@@ -1,0 +1,22 @@
+load_file("nrngui.hoc")
+// single compartment model with L,diam and channel density according
+// to paper but gl.dc increased by factor of 10 to account for dendrite
+// area. the latter is necessary to get the initial current offsets
+// in the figure.
+
+// some figures may change the init and since we aren't putting it back
+// with motor.hoc, we need to re-declare it here
+proc init() {
+	finitialize(v_init)
+	fcurrent()
+}
+
+create soma
+access soma
+load_file(1, "fig3.ses")
+//Graph[1].family("SEClamp[0].amp1")
+Graph[1].exec_menu("Keep Lines")
+// Family[0].frun() // works subsequent to 5.2
+execute("frun()", Family[0])
+Graph[1].exec_menu("Keep Lines")
+

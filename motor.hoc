@@ -1,0 +1,65 @@
+load_file("nrngui.hoc")
+
+
+nmyl = 1
+
+create soma, dend, is, myelin[nmyl], node[nmyl], extra
+access soma
+
+objref ax, somden
+ax = new SectionList()
+forsec "node" ax.append()
+is ax.append()
+extra ax.append()
+
+somden = new SectionList()
+soma somden.append
+dend somden.append
+
+connect dend(0), soma(1)
+connect is(0), soma(0)
+connect myelin[0](0), is(1)
+for i=0, nmyl-2 {
+	connect node[i](0), myelin[i](1)
+	connect myelin[i+1](0), node[i](1)
+}
+connect node[nmyl-1](0), myelin[nmyl-1](1)
+connect extra(0) , node[nmyl-1](1)
+// "extra" is a bit of unmyelinated axon for stimulating purposes
+
+forall { Ra = 100  insert dc }
+forsec ax shift_dc = -10
+
+dend   		{ nseg = 30  cm = 1   }
+soma		{ nseg = 6   cm = 1   }
+is		{ nseg = 5   cm = 1   }
+forsec "myelin" { nseg = 5   cm = .05 }
+forsec "node"	{ nseg = 1   cm = 1   }
+extra		{ nseg = 10   cm = 1   }
+
+// relative to rest of 0 mV
+vrest_dc = 0
+forall {ena = 115  ek = -5  el_dc = 0 }
+
+dend		{ diam=2*30  L=4500  gnabar_dc=0   gkbar_dc=0     gl_dc=.167e-3 }
+soma		{ diam=2*30  L=300   gnabar_dc=.07 gkbar_dc=.0175 gl_dc=.167e-3 }
+is		{ diam=2*5   L=100   gnabar_dc=.6  gkbar_dc=.1    gl_dc=1e-3    }
+forsec "myelin" { diam=2*8   L=400   gnabar_dc=0   gkbar_dc=0     gl_dc=.05e-3  }
+forsec "node"   { diam=2*10  L=75    gnabar_dc=.6  gkbar_dc=.1    gl_dc=3e-3    }
+extra		{ diam=2*5   L=500   gnabar_dc=.07 gkbar_dc=.0175 gl_dc=.167e-3 }
+
+proc init() {
+	finitialize(v_init)
+	fcurrent()
+}
+
+// use following for exact resting potential of 0
+/*
+proc init() {
+	finitialize(v_init)
+	fcurrent()
+	forall {
+		el_dc = (ina + ik)/gl_dc + v
+	}
+}
+*/

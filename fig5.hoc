@@ -1,0 +1,16 @@
+load_file("motor.hoc")
+load_file(1, "fig5.ses")
+
+isden = 1000
+//Graph[0].family("isden")
+Graph[0].exec_menu("Keep Lines")
+
+for case(&isden, 1000, 800, 600, 500, 400) {
+	is {
+		gnabar_dc = isden*1e-3
+		gkvar_dc = isden/6 * 1e-3
+	}
+	run()
+}
+Graph[0].exec_menu("Keep Lines")
+

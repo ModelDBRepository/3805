@@ -1,0 +1,30 @@
+load_file("nrngui.hoc")
+
+xpanel("Selected Figures")
+xradiobutton("Fig 3 Soma voltage clamp", "restart(0) load_file(1, \"fig3.hoc\")",1)
+xradiobutton("Fig 5 IS conductance", "restart(1) load_file(1, \"fig5.hoc\")")
+xradiobutton("Fig 6 Threshold difference", "restart(1) load_file(1, \"fig6.hoc\")")
+xradiobutton("Fig 7 Soma hyperpolarization", "restart(1) load_file(1, \"fig7.hoc\")")
+xradiobutton("Fig 8 Antidromic spatial pattern", "restart(1) load_file(1, \"fig8.hoc\")")
+xpanel()
+
+proc restart() {local i
+	objref graphItem
+	for i=0, n_graph_lists-1 {
+		graphList[i].remove_all()
+	}
+	flush_list.remove_all()
+	fast_flush_list.remove_all()
+	doNotify()
+	for (i=PWManager[0].count-1; i > 1; i -= 1) {
+		PWManager[0].close(i)
+		doNotify()
+	}
+	forall delete_section()
+	if ($1 == 1) {
+		load_file(1, "motor.hoc")
+	}
+}
+
+load_file("fig3.hoc")
+

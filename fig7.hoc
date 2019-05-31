@@ -1,0 +1,34 @@
+load_file("motor.hoc")
+forall insert extracellular // so we can plot i_membrane
+load_file(1, "fig7.ses")
+
+hyper =  -18
+
+proc init() {local a1, a2, ic, savdt, i
+	//steady state at specific soma potential then switch to
+	//steady current injection
+	a1 = IClamp[0].amp  IClamp[0].amp = 0
+	IClamp[1].amp = 0
+	OClamp[0].vc = -hyper
+	OClamp[0].switched_on = 1
+	savdt = dt
+	dt = 100
+	finitialize(v_init)
+	for i=0, 10 {fadvance()}
+	ic = OClamp[0].i
+
+	dt = savdt
+	OClamp[0].switched_on = 0
+	IClamp[0].amp = a1
+	IClamp[1].amp = ic
+	finitialize()
+}
+
+//Graph[0].family("hyper")
+Graph[0].exec_menu("Keep Lines")
+// with this simulation a final value of 36 allows the is to spike
+for case(&hyper, 0, 9, 13.5, 18, 27, 38) {
+	run()
+}
+Graph[0].exec_menu("Keep Lines")
+

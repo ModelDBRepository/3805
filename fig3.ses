@@ -1,0 +1,158 @@
+load_file("nrngui.hoc")
+objectvar save_window_, rvp_
+objectvar scene_vector_[5]
+objectvar ocbox_, ocbox_list_, scene_, scene_list_
+{ocbox_list_ = new List()  scene_list_ = new List()}
+{pwman_place(0,0,0)}
+
+//Begin PointProcessManager
+{
+load_file("pointman.hoc")
+}
+{
+soma ocbox_ = new PointProcessManager(0)
+}
+{object_push(ocbox_)}
+{
+mt.select("SEClamp") i = mt.selected()
+ms[i] = new MechanismStandard("SEClamp")
+ms[i].set("rs", 0.0001, 0)
+ms[i].set("dur1", 1, 0)
+ms[i].set("amp1", 120, 0)
+ms[i].set("dur2", 0, 0)
+ms[i].set("amp2", 0, 0)
+ms[i].set("dur3", 0, 0)
+ms[i].set("amp3", 0, 0)
+mt.select("SEClamp") i = mt.selected() maction(i)
+hoc_ac_ = 0.5
+sec.sec move() d1.flip_to(0)
+}
+{object_pop() doNotify()}
+{
+ocbox_ = ocbox_.v1
+ocbox_.map("PointProcessManager", 47, 509, 320.64, 460.8)
+}
+objref ocbox_
+//End PointProcessManager
+
+
+//Begin Insert/Remove Mechanisms
+{
+load_file("inserter.hoc", "Inserter")
+}
+{
+soma ocbox_ = new Inserter(0)
+}
+{object_push(ocbox_)}
+{
+mt.select("dc") i = mt.selected()
+ms[i] = new MechanismStandard("dc")
+ms[i].set("gnabar_dc", 0.07, 0)
+ms[i].set("gkbar_dc", 0.0175, 0)
+ms[i].set("gl_dc", 0.00167, 0)
+ms[i].set("el_dc", 0, 0)
+ms[i].set("shift_dc", 0, 0)
+mstate[i]= 1
+maction(i)
+}
+{object_pop() doNotify()}
+{
+ocbox_ = ocbox_.v1
+ocbox_.map("Insert/Remove Mechanisms", 397, 34, 91.2, 111.36)
+}
+objref ocbox_
+//End Insert/Remove Mechanisms
+
+{
+xpanel("RunControl", 0)
+v_init = 0
+xvalue("Init","v_init", 1,"stdinit()", 1, 1 )
+xbutton("Init & Run","run()")
+xbutton("Stop","stoprun=1")
+runStopAt = 5
+xvalue("Continue til","runStopAt", 1,"{continuerun(runStopAt) stoprun=1}", 1, 1 )
+runStopIn = 1
+xvalue("Continue for","runStopIn", 1,"{continuerun(t + runStopIn) stoprun=1}", 1, 1 )
+xbutton("Single Step","steprun()")
+t = 1
+xvalue("t","t", 2 )
+tstop = 1
+xvalue("Tstop","tstop", 1,"tstop_changed()", 0, 1 )
+dt = 0.002
+xvalue("dt","dt", 1,"setdt()", 0, 1 )
+steps_per_ms = 500
+xvalue("Points plotted/ms","steps_per_ms", 1,"setdt()", 0, 1 )
+xcheckbox("Quiet",&stdrun_quiet,"")
+realtime = 0
+xvalue("Real Time","realtime", 0,"", 0, 1 )
+xpanel(88,113)
+}
+{
+save_window_ = new Graph(0)
+save_window_.size(-4.47035e-08,1.5,0,120)
+scene_vector_[3] = save_window_
+{save_window_.view(-4.47035e-08, 0, 1.5, 120, 393, 183, 301.44, 103.36)}
+graphList[0].append(save_window_)
+save_window_.save_name("graphList[0].")
+save_window_.addexpr("v(.5)", 1, 1, 0.8, 0.9, 2)
+}
+{
+xpanel("soma(0 - 1) (Parameters)", 0)
+xlabel("soma(0 - 1) (Parameters)")
+xlabel("nseg = 1")
+soma.L = 60
+xvalue("L","soma.L", 1,"define_shape()", 0, 0 )
+soma.diam = 300
+xvalue("diam","soma.diam", 1,"", 0, 0 )
+soma.cm = 1
+xvalue("cm","soma.cm", 1,"", 0, 0 )
+soma.gnabar_dc = 0.07
+xvalue("gnabar_dc","soma.gnabar_dc", 1,"", 0, 0 )
+soma.gkbar_dc = 0.0175
+xvalue("gkbar_dc","soma.gkbar_dc", 1,"", 0, 0 )
+soma.gl_dc = 0.00167
+xvalue("gl_dc","soma.gl_dc", 1,"", 0, 0 )
+soma.el_dc = 0
+xvalue("el_dc","soma.el_dc", 1,"", 0, 0 )
+soma.shift_dc = 0
+xvalue("shift_dc","soma.shift_dc", 1,"", 0, 0 )
+soma.ena = 115
+xvalue("ena","soma.ena", 1,"", 0, 0 )
+soma.ek = -5
+xvalue("ek","soma.ek", 1,"", 0, 0 )
+xpanel(727,33)
+}
+{
+save_window_ = new Graph(0)
+save_window_.size(-2.98023e-08,1.5,-1000,1000)
+scene_vector_[4] = save_window_
+{save_window_.view(-2.98023e-08, -1000, 1.5, 2000, 396, 352, 299.52, 306.88)}
+graphList[1].append(save_window_)
+save_window_.save_name("graphList[1].")
+save_window_.addvar("SEClamp[0].i", 1, 1, 0.476282, 0.962565, 2)
+}
+
+//Begin special
+{
+load_file("family.hoc", "Family")
+}
+{
+ocbox_ = new Family(0)
+}
+{object_push(ocbox_)}
+{
+xstart=30  xend=120  nstep=7  setval() build()
+
+variable = "SEClamp[0].amp1"
+generator = "run()"
+}
+{object_pop()}
+{
+ocbox_ = ocbox_.box
+ocbox_.map("special", 398, 732, 242.88, 250.56)
+}
+objref ocbox_
+//End special
+
+objectvar scene_vector_[1]
+{doNotify()}

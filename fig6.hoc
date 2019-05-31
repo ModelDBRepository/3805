@@ -1,0 +1,27 @@
+load_file("motor.hoc")
+load_file(1, "fig6.ses")
+
+shift = -10
+//Graph[0].family("shift")
+Graph[0].exec_menu("Keep Lines")
+
+
+// get slightly more similar results if we adjust the leakage so
+// that we start in precise steady state at v=0 everywhere
+
+proc init() {
+	finitialize(v_init)
+	fcurrent()
+	forall {
+		el_dc = (ina + ik)/gl_dc + v
+	}
+}
+
+for case(&shift, 10, 5, 0, -5) {
+	soma {
+		shift_dc = -shift
+	}
+	run()
+}
+Graph[0].exec_menu("Keep Lines")
+

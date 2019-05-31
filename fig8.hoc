@@ -1,0 +1,8 @@
+load_file("motor.hoc")
+forall insert extracellular // so we can plot i_membrane
+load_file(1, "fig8.ses")
+stdinit()
+Graph[3].exec_menu("Keep Lines")
+run()
+Graph[3].exec_menu("Keep Lines")
+
